@@ -537,6 +537,12 @@ public class BuilderTileEntity extends TickingTileEntity implements IHudSupport 
     }
 
     public void setAnchor(AnchorMode anchor) {
+        // GUI value synchronization calls this setter on the client as well.
+        // Only explicit server-side anchor changes may reposition the shape card.
+        if (level != null && level.isClientSide()) {
+            this.anchor = anchor;
+            return;
+        }
         if (supportMode && !level.isClientSide()) {
             clearSupportBlocks();
         }
